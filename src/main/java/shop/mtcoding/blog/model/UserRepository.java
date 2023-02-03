@@ -1,5 +1,5 @@
 package shop.mtcoding.blog.model;
 
-public class UserRepository {
+public interface UserRepository {
     
 }

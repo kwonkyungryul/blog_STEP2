@@ -14,9 +14,15 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password: 
-  h2:
+  h2: 
     console:
       enabled: true
+  sql:
+    init:
+      schema-locations:
+      - classpath:db/table.sql
+      data-locations:
+      - classpath:db/data.sql
   output:
     ansi:
       enabled: always
