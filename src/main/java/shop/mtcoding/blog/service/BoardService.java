@@ -15,7 +15,7 @@ public class BoardService {
     @Autowired
     BoardRepository boardRepository;
     
-    // where 절에 걸리는 파라미터를 앞에 받기ㄴㄴ
+    // where 절에 걸리는 파라미터를 앞에 받기 (규칙)
     @Transactional
     public void 글쓰기(BoardSaveReqDto boardSaveReqDto, int userId) {
         int result = boardRepository.insert(boardSaveReqDto.getTitle(), boardSaveReqDto.getContent(), userId);
