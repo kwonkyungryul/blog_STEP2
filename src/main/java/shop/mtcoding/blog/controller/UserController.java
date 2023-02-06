@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import shop.mtcoding.blog.dto.UserReq.JoinReqDto;
-import shop.mtcoding.blog.dto.UserReq.LoginReqDto;
+import shop.mtcoding.blog.dto.user.UserReq.JoinReqDto;
+import shop.mtcoding.blog.dto.user.UserReq.LoginReqDto;
 import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.service.UserService;
@@ -37,11 +37,8 @@ public class UserController {
             throw new CustomException("email이 존재하지 않습니다.");
         }
 
-        int result = userService.회원가입(joinReqDto);
+        userService.회원가입(joinReqDto);
 
-        if (result != 1) {
-            throw new CustomException("요청하신 서비스가 정상 처리되지 않았습니다.");
-        }
 
         return "redirect:/loginForm"; // 302
     }

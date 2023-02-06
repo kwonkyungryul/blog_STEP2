@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.mtcoding.blog.dto.UserReq.JoinReqDto;
-import shop.mtcoding.blog.dto.UserReq.LoginReqDto;
+import shop.mtcoding.blog.dto.user.UserReq.JoinReqDto;
+import shop.mtcoding.blog.dto.user.UserReq.LoginReqDto;
 import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.model.UserRepository;
@@ -17,7 +17,7 @@ public class UserService {
     UserRepository userRepository;
     
     @Transactional
-    public int 회원가입(JoinReqDto joinReqDto) { // 메서드가 동기화가 돼있지는 않기 때문에 여러 요청이 와도 메서드는 동시에 때려진다.
+    public void 회원가입(JoinReqDto joinReqDto) { // 메서드가 동기화가 돼있지는 않기 때문에 여러 요청이 와도 메서드는 동시에 때려진다.
         User sameuser = userRepository.findByUsername(joinReqDto.getUsername());
         
         if (sameuser != null) {
@@ -26,7 +26,9 @@ public class UserService {
         // 변경코드가 발동하면 락이 걸린다
         int result = userRepository.insert(joinReqDto.getUsername(), joinReqDto.getPassword(), joinReqDto.getEmail());
 
-        return result;
+        if (result != 1) {
+            throw new CustomException("요청하신 서비스가 정상 처리되지 않았습니다.");
+        }
     }
 
     @Transactional(readOnly = true) // select 하던 도중 변경이 일어나면 select중에 데이터가 변경되므로 트랜잭션을 걸어준다. readonly = true를 걸어야 오로지 읽기만을 위한 트랜잭션이다.
