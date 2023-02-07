@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,7 +26,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import shop.mtcoding.blog.dto.ResponseDto;
+import shop.mtcoding.blog.dto.board.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardDetailResponseDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardMainResponseDto;
 import shop.mtcoding.blog.model.User;
@@ -142,6 +143,36 @@ public class BoardControllerTest {
          */
         // then
         resultActions.andExpect(jsonPath("$.code").value(1));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void update_test() throws Exception {
+        // given
+        int id = 1;
+        BoardUpdateReqDto b = new BoardUpdateReqDto();
+        b.setTitle("제목1");
+        b.setContent("내용1");
+        
+        // String requestBody = "title=제목1&content=내용1";
+
+        String json = om.writeValueAsString(b);
+
+        System.out.println(json);
+
+        // when
+        ResultActions resultActions = mvc.perform(put("/board/" + id)
+            .content(json)
+            .contentType(MediaType.APPLICATION_JSON)
+            .session(mockSession));
+        /*
+         * jsonPath
+         * 최상위 : $
+         * 객체탐색 : 닷(.)
+         * 배열 : [0]
+         */
+        // then
+        // resultActions.andExpect(jsonPath("$.code").value(1));
         resultActions.andExpect(status().isOk());
     }
 }
