@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import shop.mtcoding.blog.dto.board.BoardResp.BoardDetailResponseDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardMainResponseDto;
 import shop.mtcoding.blog.model.User;
 
@@ -96,5 +97,29 @@ public class BoardControllerTest {
 
         // then
         resultActions.andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    public void detail_test() throws Exception {
+        // given
+        int id = 1;
+
+        // when
+        ResultActions resultActions = mvc.perform(
+            get("/board/" + id));
+        
+        Map<String, Object> map = resultActions.andReturn().getModelAndView().getModel();
+        BoardDetailResponseDto dto = (BoardDetailResponseDto) map.get("dto");
+        
+        System.out.println("테스트 : " + om.writeValueAsString(dto));
+
+        
+        // then
+        resultActions.andExpect(status().isOk());
+        assertThat(dto.getId()).isEqualTo(1);
+        assertThat(dto.getUsername()).isEqualTo("ssar");
+        assertThat(dto.getTitle()).isEqualTo("1번째 제목");
+        assertThat(dto.getContent()).isEqualTo("1번째 내용");
+        assertThat(dto.getUserId()).isEqualTo(1);
     }
 }
