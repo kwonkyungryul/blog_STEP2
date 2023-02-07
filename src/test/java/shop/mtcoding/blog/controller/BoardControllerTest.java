@@ -1,8 +1,10 @@
 package shop.mtcoding.blog.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.sql.Timestamp;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import shop.mtcoding.blog.dto.ResponseDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardDetailResponseDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardMainResponseDto;
 import shop.mtcoding.blog.model.User;
@@ -105,8 +108,7 @@ public class BoardControllerTest {
         int id = 1;
 
         // when
-        ResultActions resultActions = mvc.perform(
-            get("/board/" + id));
+        ResultActions resultActions = mvc.perform(get("/board/" + id));
         
         Map<String, Object> map = resultActions.andReturn().getModelAndView().getModel();
         BoardDetailResponseDto dto = (BoardDetailResponseDto) map.get("dto");
@@ -121,5 +123,25 @@ public class BoardControllerTest {
         assertThat(dto.getTitle()).isEqualTo("1번째 제목");
         assertThat(dto.getContent()).isEqualTo("1번째 내용");
         assertThat(dto.getUserId()).isEqualTo(1);
+    }
+
+    @Test
+    public void delete_test() throws Exception {
+        // given
+        int id = 1;
+
+        // when
+        ResultActions resultActions = mvc.perform(delete("/board/" + id).session(mockSession));
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+        /*
+         * jsonPath
+         * 최상위 : $
+         * 객체탐색 : 닷(.)
+         * 배열 : [0]
+         */
+        // then
+        resultActions.andExpect(jsonPath("$.code").value(1));
+        resultActions.andExpect(status().isOk());
     }
 }
