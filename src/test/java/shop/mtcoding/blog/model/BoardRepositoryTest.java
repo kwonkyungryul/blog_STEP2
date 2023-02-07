@@ -21,7 +21,7 @@ public class BoardRepositoryTest {
     @Test
     public void findAllWithUser_test() throws Exception {
         // given
-        ObjectMapper om = new ObjectMapper();
+        ObjectMapper om = new ObjectMapper(); // Jackson라이브러리가 들고있음
 
         // when
         List<BoardMainResponseDto> boardMainResponseDto = boardRepository.findAllWithUser();
