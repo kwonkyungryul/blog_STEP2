@@ -1,13 +1,14 @@
 package shop.mtcoding.blog.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-
-import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import shop.mtcoding.blog.dto.board.BoardResp.BoardMainResponseDto;
 import shop.mtcoding.blog.model.User;
 
 /*
@@ -36,6 +40,9 @@ public class BoardControllerTest {
 
     private MockHttpSession mockSession;
 
+    @Autowired
+    private ObjectMapper om;
+
     @BeforeEach // Test 메서드 실행 직전에 호출됨
     public void setUp() {
         User user = new User();
@@ -47,6 +54,26 @@ public class BoardControllerTest {
 
         mockSession = new MockHttpSession();
         mockSession.setAttribute("principal", user);
+    }
+
+    @Test
+    public void main_test() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = mvc.perform(
+            get("/"));
+
+        resultActions.andExpect(status().isOk());
+        Map<String, Object> map = resultActions.andReturn().getModelAndView().getModel();
+        List<BoardMainResponseDto> dtos = (List<BoardMainResponseDto>) map.get("dtos");
+        String model = om.writeValueAsString(dtos);
+        System.out.println("테스트 : " + model);
+
+        // then
+        assertThat(dtos.size()).isEqualTo(6);
+        assertThat(dtos.get(0).getUsername()).isEqualTo("ssar");
+        assertThat(dtos.get(0).getTitle()).isEqualTo("1번째 제목");
     }
 
     @Test
