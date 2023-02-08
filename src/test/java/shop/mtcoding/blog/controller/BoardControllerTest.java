@@ -99,7 +99,7 @@ public class BoardControllerTest {
         // given
         String title = "가";
 
-        for (int i = 0; i < 99; i++) {
+        for (long i = 0; i < 99; i++) {
             title += "가";
         }
 
