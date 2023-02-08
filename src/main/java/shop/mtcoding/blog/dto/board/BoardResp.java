@@ -10,6 +10,7 @@ public class BoardResp {
     public static class BoardMainResponseDto {
         private Integer id;
         private String title;
+        private String thumbnail;
         private String username;
         // Thumbnail 추후에 필요
     }

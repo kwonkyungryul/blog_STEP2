@@ -20,6 +20,7 @@ import shop.mtcoding.blog.dto.board.BoardReq.BoardSaveReqDto;
 import shop.mtcoding.blog.dto.board.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.blog.handler.ex.CustomApiException;
 import shop.mtcoding.blog.handler.ex.CustomException;
+import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.BoardRepository;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.service.BoardService;
@@ -38,6 +39,8 @@ public class BoardController {
 
     @PutMapping("/board/{id}")
     public @ResponseBody ResponseEntity<?> update(@PathVariable int id, @RequestBody BoardUpdateReqDto boardUpdateReqDto) {
+        // Spring의 기본 파싱 전략은 x-www-form-url-encoded다.
+        // RequestBody를 붙이면 버퍼 그대로 읽는다. 그 다음 컨텐트 타입이 text면 그대로 준다. 컨텐트 타입이 json이면 앞에 적힌 타입으로 파싱해준다.
         // System.out.println(boardUpdateReqDto.getTitle());
         // System.out.println(boardUpdateReqDto.getContent());
         User principal = (User) session.getAttribute("principal");
@@ -59,7 +62,7 @@ public class BoardController {
 
         boardService.게시글수정(id, principal.getId(), boardUpdateReqDto);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "수정성공", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "수정성공", null), HttpStatus.OK); // HttpStatus.CREATED = 201 // 인서트(업데이트)가 잘 됐을 때는 201
     }
 
     @DeleteMapping("/board/{id}")
@@ -117,7 +120,23 @@ public class BoardController {
 
     @GetMapping("/board/{id}/updateForm")
     public String updateForm(@PathVariable int id, Model model) {
-        model.addAttribute("dto", boardRepository.findById(id));
+        User principal = (User) session.getAttribute("principal");
+        if (principal == null) {
+            throw new CustomException("비정상적인 접근입니다. 로그인을 해주세요.", HttpStatus.UNAUTHORIZED);
+        }
+
+        Board boardPS = boardRepository.findById(id); // PS = Persistence -> 영구히 저장하다 라는 뜻
+        if (boardPS == null) {
+            throw new CustomException("없는 게시글을 수정할 수 없습니다.");
+        }
+
+        if (principal.getId() != boardPS.getUserId()) {
+            throw new CustomException("해당 게시물을 수정할 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+
+        model.addAttribute("board", boardRepository.findById(id));
         return "board/updateForm";
     }
+    
 }

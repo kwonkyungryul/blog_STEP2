@@ -4,14 +4,14 @@
     <div class="container my-3">
         <form id="updateBox">
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Enter title" name="title" id="title" value="${dto.title}">
+                <input type="text" class="form-control" placeholder="Enter title" name="title" id="title" value="${board.title}">
             </div>
 
             <div class="form-group">
-                <textarea class="form-control summernote" rows="5" id="content" name="content">${dto.content}</textarea>
+                <textarea class="form-control summernote" rows="5" id="content" name="content">${board.content}</textarea>
             </div>
+            <button type="button" class="btn btn-primary" onClick="updateById(${board.id})">글수정완료</button>
         </form>
-        <button type="button" class="btn btn-primary" onClick="updateById(${dto.id})">글수정완료</button>
 
     </div>
 
@@ -38,7 +38,7 @@
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
                 },
-                dataType: "json"
+                dataType: "json" // 응답의 MIME타입으로 유추함(Default)
             })
             .done((res) => {
                 alert(res.msg);

@@ -164,19 +164,19 @@ public class BoardControllerTest {
         // given
         int id = 1;
         BoardUpdateReqDto b = new BoardUpdateReqDto();
-        b.setTitle("제목1");
-        b.setContent("내용1");
+        b.setTitle("제목1-수정");
+        b.setContent("내용1-수정");
         
         // String requestBody = "title=제목1&content=내용1";
 
-        String json = om.writeValueAsString(b);
+        String requestBody = om.writeValueAsString(b);
 
-        System.out.println(json);
+        System.out.println("테스트 : " + requestBody);
 
         // when
         ResultActions resultActions = mvc.perform(put("/board/" + id)
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .session(mockSession));
         /*
          * jsonPath
@@ -185,7 +185,7 @@ public class BoardControllerTest {
          * 배열 : [0]
          */
         // then
-        // resultActions.andExpect(jsonPath("$.code").value(1));
         resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.code").value(1));
     }
 }
