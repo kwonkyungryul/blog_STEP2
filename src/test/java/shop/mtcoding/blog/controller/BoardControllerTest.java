@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,6 +39,7 @@ import shop.mtcoding.blog.model.User;
  * AutoConfigureMockMvc는 Mock 환경(가짜 IOC컨테이너)에 MockMvc Bean이 생성됨
  */
 
+@Transactional // 메서드 실행 직후 롤백 // 서비스 트랜잭셔널은 Default가 commit이다. 테스트코드에서는 메서드가 끝나고 무조건 rollback 한다. // 단점 : auto_increment가 초기화가 안된다.
 @AutoConfigureMockMvc // 안 적어주면 MockMvc다 DI가 안 된다.
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK) // Mock라고 하면 실제환경과 별개로 가짜 환경이 존재한다. 포트도 랜덤으로 뜬다.
 public class BoardControllerTest {
@@ -48,8 +52,17 @@ public class BoardControllerTest {
     @Autowired
     private ObjectMapper om;
 
+    @BeforeAll
+    public static void 테이블차리기() {};
+
+    @AfterEach
+    public void teardown() {
+        // 데이터 지우고, 다시 인서트
+    }
+
     @BeforeEach // Test 메서드 실행 직전에 호출됨
     public void setUp() {
+        // 데이터 인서트
         User user = new User();
         user.setId(1);
         user.setUsername("ssar");
