@@ -30,7 +30,7 @@ public class BoardService {
         int result = boardRepository.insert(boardSaveReqDto.getTitle(), boardSaveReqDto.getContent(),  thumbnail, userId);
 
         if (result != 1) {
-            throw new CustomException("정상적으로 작성되지 않았습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
+            throw new CustomApiException("정상적으로 작성되지 않았습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
         }
     }
 

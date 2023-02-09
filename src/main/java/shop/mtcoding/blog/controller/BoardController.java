@@ -78,28 +78,30 @@ public class BoardController {
     }
 
     @PostMapping("/board")
-    public String save(BoardSaveReqDto boardSaveReqDto) {
+    public @ResponseBody ResponseEntity<?> save(@RequestBody BoardSaveReqDto boardSaveReqDto) {
+        // ResponseBody는 뷰리졸버 대신에 메세지컨버터가 발동한다.
+        // 메세지 컨버터는 버퍼에 쓸 때 자바 오브젝트를 Json으로 변환해서 넘겨준다.
         User principal = (User) session.getAttribute("principal");
         if (principal == null) {
-            throw new CustomException("비정상적인 접근입니다. 로그인을 해주세요.", HttpStatus.UNAUTHORIZED);
+            throw new CustomApiException("비정상적인 접근입니다. 로그인을 해주세요.", HttpStatus.UNAUTHORIZED);
         }
 
         if (boardSaveReqDto.getTitle() == null || boardSaveReqDto.getTitle().isEmpty()) {
-            throw new CustomException("title을 작성해주세요.");
+            throw new CustomApiException("title을 작성해주세요.");
         }
 
         if (boardSaveReqDto.getTitle().length() > 100) {
-            throw new CustomException("title의 길이가 100자 이하여야 합니다.");
+            throw new CustomApiException("title의 길이가 100자 이하여야 합니다.");
         }
 
         if (boardSaveReqDto.getContent() == null || boardSaveReqDto.getContent().isEmpty()) {
-            throw new CustomException("content를 작성해주세요.");
+            throw new CustomApiException("content를 작성해주세요.");
         }
 
         boardService.글쓰기(boardSaveReqDto, principal.getId());
         
 
-        return "redirect:/";
+        return new ResponseEntity<>(new ResponseDto<>(1, "정상적으로 완료되었습니다.", null), HttpStatus.CREATED);
     }
 
     @GetMapping({"/", "/board"})
