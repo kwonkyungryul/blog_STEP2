@@ -5,9 +5,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class ThumbnailParse {
+public class HtmlParse {
     
-    public static String thumbParse(String content) {
+    public static String getThumbnail(String content) {
         String thumbnail = "";
 
         Document doc = Jsoup.parse(content);

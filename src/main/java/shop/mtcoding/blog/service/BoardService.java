@@ -1,9 +1,5 @@
 package shop.mtcoding.blog.service;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,7 +11,7 @@ import shop.mtcoding.blog.handler.ex.CustomApiException;
 import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.BoardRepository;
-import shop.mtcoding.blog.util.ThumbnailParse;
+import shop.mtcoding.blog.util.HtmlParse;
 
 @Transactional(readOnly = true)
 @Service
@@ -28,7 +24,7 @@ public class BoardService {
     @Transactional // (rollbackFor = RuntimeException.class)
     public void 글쓰기(BoardSaveReqDto boardSaveReqDto, int userId) {
         // 1. content 내용을 document로 받고, img 찾아내서(0, 1, 2) src를 찾아서 thumbnail 추가
-        String thumbnail = ThumbnailParse.thumbParse(boardSaveReqDto.getContent());
+        String thumbnail = HtmlParse.getThumbnail(boardSaveReqDto.getContent());
 
 
         int result = boardRepository.insert(boardSaveReqDto.getTitle(), boardSaveReqDto.getContent(),  thumbnail, userId);
@@ -69,7 +65,7 @@ public class BoardService {
             throw new CustomApiException("해당 게시물을 수정할 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
 
-        String thumbnail = ThumbnailParse.thumbParse(boardUpdateReqDto.getContent());
+        String thumbnail = HtmlParse.getThumbnail(boardUpdateReqDto.getContent());
 
         try { // 제어권을 가져옴
             boardRepository.updateById(id, boardUpdateReqDto.getTitle(), boardUpdateReqDto.getContent(), thumbnail);
