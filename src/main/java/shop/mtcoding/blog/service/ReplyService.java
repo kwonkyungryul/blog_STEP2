@@ -5,10 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.mtcoding.blog.controller.ReplyController.ReplySaveReqDto;
-import shop.mtcoding.blog.handler.ex.CustomApiException;
+import shop.mtcoding.blog.dto.reply.ReplyReq.ReplySaveReqDto;
+import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.ReplyRepository;
-import shop.mtcoding.blog.util.HtmlParse;
 
 @Transactional(readOnly = true)
 @Service
@@ -24,7 +23,7 @@ public class ReplyService {
         int result = replyRepository.insert(replySaveReqDto.getComment(), replySaveReqDto.getBoardId(), principalId);
 
         if (result != 1) {
-            throw new CustomApiException("정상적으로 작성되지 않았습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
+            throw new CustomException("정상적으로 작성되지 않았습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
         }
     }
 }

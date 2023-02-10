@@ -19,5 +19,5 @@ interface Dao {
 
 @Mapper
 public interface ReplyRepository extends Dao {
-
+    public List<Reply> findByBoardIdWithUser(int boardId);
 }
