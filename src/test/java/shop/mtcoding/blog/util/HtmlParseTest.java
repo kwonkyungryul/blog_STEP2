@@ -10,12 +10,13 @@ public class HtmlParseTest {
 
     @Test
     public void jsoup_test() throws Exception{
-        Document doc = Jsoup.connect("https://en.wikipedia.org/").get();
+        Document doc = Jsoup.connect("https://search.naver.com/search.naver?where=view&sm=tab_jum&query=%EB%B6%80%EC%82%B0+%EB%A7%9B%EC%A7%91").get();
         System.out.println(doc.title());
-        // Elements newsHeadlines = doc.select("#mp-itn b a");
-        // for (Element headline : newsHeadlines) {
-        //     log("%s\n\t%s", headline.attr("title"), headline.absUrl("href"));
-        // }
+        // #main_pack > section > div > div._list > panel-list > div:nth-child(1) > more-contents > div > ul > li:nth-child(1) > div.total_wrap.api_ani_send > div > a
+        Elements elements = doc.select("#main_pack > section > div > div._list > panel-list > div:nth-child(1) > more-contents > div > ul > li:nth-child(1) > div.total_wrap.api_ani_send > div > a");
+        elements.stream().forEach((e)-> {
+            System.out.println(e.text());
+        });
     }
 
     @Test

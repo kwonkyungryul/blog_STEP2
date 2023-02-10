@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import shop.mtcoding.blog.dto.board.BoardReq.BoardSaveReqDto;
 import shop.mtcoding.blog.dto.board.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardDetailResponseDto;
 import shop.mtcoding.blog.dto.board.BoardResp.BoardMainResponseDto;
@@ -97,23 +98,21 @@ public class BoardControllerTest {
     @Test
     public void save_test() throws Exception {
         // given
-        String title = "가";
+        BoardSaveReqDto boardSaveReqDto = new BoardSaveReqDto();
+        boardSaveReqDto.setTitle("제목1");
+        boardSaveReqDto.setContent("내용1");
 
-        for (long i = 0; i < 99; i++) {
-            title += "가";
-        }
-
-        String requestBody = "title=" + title + "&content=내용1";
+        String requestBody = om.writeValueAsString(boardSaveReqDto);
 
         // when
         ResultActions resultActions = mvc.perform(
             post("/board")
             .content(requestBody)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .session(mockSession));
 
         // then
-        resultActions.andExpect(status().is3xxRedirection());
+        resultActions.andExpect(status().isCreated());
     }
 
     @Test

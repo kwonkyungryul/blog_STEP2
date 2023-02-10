@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import shop.mtcoding.blog.dto.ResponseDto;
 import shop.mtcoding.blog.dto.board.BoardReq.BoardSaveReqDto;
@@ -37,6 +38,13 @@ public class BoardController {
 
     @Autowired
     BoardRepository boardRepository;
+
+    @PostMapping("/juso")
+    public @ResponseBody String callback(String roadFullAddr) {
+        System.out.println(roadFullAddr);
+        RestTemplate rt = new RestTemplate(); // 다른 서버에게 http 요청할 때 제일 많이 씀
+        return "ok";
+    }
 
     @PutMapping("/board/{id}")
     public @ResponseBody ResponseEntity<?> update(@PathVariable int id, @RequestBody BoardUpdateReqDto boardUpdateReqDto) {
