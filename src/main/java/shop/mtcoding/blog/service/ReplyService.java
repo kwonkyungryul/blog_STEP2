@@ -5,10 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import shop.mtcoding.blog.dto.reply.ReplyReq.ReplySaveReqDto;
+import shop.mtcoding.blog.handler.ex.CustomApiException;
 import shop.mtcoding.blog.handler.ex.CustomException;
+import shop.mtcoding.blog.model.Reply;
 import shop.mtcoding.blog.model.ReplyRepository;
 
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 public class ReplyService {
@@ -24,6 +28,27 @@ public class ReplyService {
 
         if (result != 1) {
             throw new CustomException("정상적으로 작성되지 않았습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
+        }
+    }
+
+    
+    @Transactional
+    public void 댓글삭제(int id, int principalId) {
+        Reply replyPS = replyRepository.findById(id);
+        if (replyPS == null) {
+            throw new CustomApiException("댓글이 존재하지 않습니다.");
+        }
+
+        if (replyPS.getUserId() != principalId) {
+            throw new CustomApiException("권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+        // 1. 인증 OK, 2. 댓글 존재유무 확인, 3. 권한 OK
+        try {
+            replyRepository.deleteById(id);
+        } catch (Exception e) {
+            log.error("서버에러" + e.getMessage());
+            // 버퍼달고 파일에 쓰기.
+            throw new CustomApiException("댓글삭제 실패.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

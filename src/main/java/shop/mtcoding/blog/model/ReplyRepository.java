@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import shop.mtcoding.blog.dto.board.BoardResp.BoardDetailResponseDto;
+
 interface Dao {
     public List<Reply> findAll();
 
@@ -19,5 +21,5 @@ interface Dao {
 
 @Mapper
 public interface ReplyRepository extends Dao {
-    public List<Reply> findByBoardIdWithUser(int boardId);
+    public List<BoardDetailResponseDto> findByBoardIdWithUser(int boardId);
 }

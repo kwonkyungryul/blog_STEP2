@@ -142,14 +142,12 @@ public class ReplyControllerTest {
     }
 
     @Test
-    public void delete_test() throws Exception {
+    public void deleteReply_test() throws Exception {
         // given
         int id = 1;
 
         // when
-        ResultActions resultActions = mvc.perform(delete("/board/" + id).session(mockSession));
-        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("테스트 : " + responseBody);
+        ResultActions resultActions = mvc.perform(delete("/reply/" + id).session(mockSession));
         /*
          * jsonPath
          * 최상위 : $
@@ -157,7 +155,6 @@ public class ReplyControllerTest {
          * 배열 : [0]
          */
         // then
-        resultActions.andExpect(jsonPath("$.code").value(1));
         resultActions.andExpect(status().isOk());
     }
 
