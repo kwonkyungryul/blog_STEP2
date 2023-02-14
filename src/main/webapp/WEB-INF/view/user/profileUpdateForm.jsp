@@ -40,39 +40,38 @@
 
 <div class="container my-3">
     <h2 class="text-center">프로필 사진 변경 페이지</h2>
-    <form id="profileForm" action="/user/profileUpdate" method="post" enctype="multipart/form-data">
+    <form id="profileForm">
         <div class="form-group">
             <img src="${user.profile == null ? '/images/dora.png' : user.profile}" alt="Current Photo" class="img-fluid" id="imagePreview">
         </div>
         <div class="form-group">
             <input type="file" class="form-control" id="profile" name="profile" onchange="chooseImage(this)">
         </div>
-        <button type="submit" class="btn btn-primary">사진변경</button>
+        <button type="button" class="btn btn-primary" onclick="updateImage()">사진변경</button>
     </form>
 </div>
 
 <script>
     // ajax
     function updateImage() {
-        let profileForm = $(`#profileForm`)[0];
+        let profileForm = $('#profileForm')[0];
         let formData = new FormData(profileForm);
-
         $.ajax({
-                type: "put",
-                url: "/user/profileUpdate",
-                data: formData,
-                contentType: false, // 필수 : x-www-form-urlencoded로 파싱되는 것을 방지
-                processType: false, // 필수 : contentType을 false로 줬을 때 QueryString 자동 설정 됨. 해제.
-                enctype: "multipart/form-data",
-                dataType: "json" // 응답의 MIME타입으로 유추함(Default)
+            type: "put",
+            url: "/user/profileUpdate",
+            data: formData,
+            contentType: false, // 필수 : x-www-form-urlencoded로 파싱되는 것을 방지
+            processData: false, // 필수 : contentType을 false로 줬을 때 QueryString 자동 설정 됨. 해제.
+            enctype: "multipart/form-data",
+            dataType: "json" // 응답의 MIME타입으로 유추함(Default)
             })
             .done((res) => {
-                alert(res.msg);
-                location.href="/";
+            alert(res.msg);
+            location.href="/";
             })
             .fail((err) => {
                 alert(err.responseJSON.msg);
-            })
+            });
     }
 
     function chooseImage(obj) {
@@ -81,7 +80,7 @@
         let f = obj.files[0];
         console.log(f);
 
-        if (f.type.match("image.*")) { // MIME 타입
+        if (!f.type.match("image.*")) { // MIME 타입
             alert(`이미지를 등록해야 합니다`);
             return;
         }

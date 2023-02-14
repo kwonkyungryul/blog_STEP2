@@ -1,8 +1,5 @@
 package shop.mtcoding.blog.service;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import shop.mtcoding.blog.dto.user.UserReq.JoinReqDto;
 import shop.mtcoding.blog.dto.user.UserReq.LoginReqDto;
-import shop.mtcoding.blog.dto.user.UserReq.UserUpdateDto;
+import shop.mtcoding.blog.handler.ex.CustomApiException;
 import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.model.UserRepository;
@@ -52,20 +49,19 @@ public class UserService {
     public User 프로필사진수정(int principalId, MultipartFile profile) {
         User userPS = userRepository.findById(principalId);
         if (userPS == null) {
-            throw new CustomException("회원정보가 존재하지 않습니다.");
+            throw new CustomApiException("회원정보가 존재하지 않습니다.");
         }
 
         String uuidImageName = PathUtil.writeImageFile(profile);
         userPS.setProfile(uuidImageName);
 
         try {
+            // 2번 저장된 파일의 경로를 DB에 저장
             userRepository.updateById(userPS.getId(), userPS.getUsername(), userPS.getPassword(), userPS.getEmail(), userPS.getProfile(), userPS.getCreatedAt());
         } catch (Exception e) {
-            throw new CustomException("사진을 웹서버에 저장하지 못하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
+            throw new CustomApiException("사진을 웹서버에 저장하지 못하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500번 에러
         }
 
         return userPS;
-
-        // 2번 저장된 파일의 경로를 DB에 저장
     }
 }

@@ -1,25 +1,21 @@
 package shop.mtcoding.blog.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import shop.mtcoding.blog.dto.ResponseDto;
 import shop.mtcoding.blog.dto.user.UserReq.JoinReqDto;
 import shop.mtcoding.blog.dto.user.UserReq.LoginReqDto;
-import shop.mtcoding.blog.dto.user.UserReq.UserUpdateDto;
+import shop.mtcoding.blog.handler.ex.CustomApiException;
 import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.model.UserRepository;
@@ -37,25 +33,27 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping("/user/profileUpdate")
-    public String profileUpdate(MultipartFile profile){
+    @PutMapping("/user/profileUpdate")
+    public ResponseEntity<?> profileUpdate(MultipartFile profile){
         User principal = (User) session.getAttribute("principal");
         if (principal == null) {
-            return "redirect:/loginForm";
+            throw new CustomApiException("잘못된 접근입니다. 로그인 후 이용해주세요", HttpStatus.UNAUTHORIZED);
         }
 
         if (profile.isEmpty()) {
-            throw new CustomException("사진이 전송되지 않았습니다.");
+            throw new CustomApiException("사진이 전송되지 않았습니다.");
         }
 
         // 사진이 아니면 Exception 터트리기
+        System.out.println(profile.getContentType());
+        if (!profile.getContentType().startsWith("image")) {
+            throw new CustomApiException("이미지 파일만 등록이 가능합니다.");
+        }
 
-        userService.프로필사진수정(principal.getId(), profile);
-        
-        User userPS = userRepository.findById(principal.getId());
+        User userPS = userService.프로필사진수정(principal.getId(), profile);
         session.setAttribute("principal", userPS);
         
-        return "redirect:/";
+        return new ResponseEntity<>(new ResponseDto<>(1, "프로필 수정이 완료되었습니다.", null), HttpStatus.OK);
     }
 
     @GetMapping("/user/profileUpdateForm")
