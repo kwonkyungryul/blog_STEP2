@@ -54,8 +54,6 @@
 
     <script>
         function deleteByReplyId(id) {
-            
-
             $.ajax({
                 type: "delete",
                 url: "/reply/" + id,
