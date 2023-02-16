@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
@@ -84,7 +85,7 @@ public class BoardController {
             throw new CustomApiException("비정상적인 접근입니다. 로그인을 해주세요.", HttpStatus.UNAUTHORIZED);
         }
 
-        boardService.게시글삭제(id, principal.getId());
+        boardService.게시글삭제(id, principal.getId(), principal.getRole());
         return new ResponseEntity<>(new ResponseDto<>(1, "삭제성공", null), HttpStatus.OK);
     }
 
@@ -116,8 +117,9 @@ public class BoardController {
     }
 
     @GetMapping({"/", "/board"})
-    public String main(Model model) {
-        model.addAttribute("dtos", boardRepository.findAllWithUser());
+    public String main(Model model, @RequestParam(defaultValue = "all") String searchOpt,
+                                    @RequestParam(defaultValue = "") String words) {
+        model.addAttribute("dtos", boardRepository.findAllWithUser(searchOpt, words));
         return "board/main";
     }
 

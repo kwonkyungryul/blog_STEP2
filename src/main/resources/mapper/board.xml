@@ -4,8 +4,23 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="shop.mtcoding.blog.model.BoardRepository">
+
+    <sql id="search">
+		<choose>
+			<when test="searchOpt == 'all'">
+				WHERE title LIKE CONCAT( '%', #{words}, '%' )
+				OR username LIKE CONCAT( '%', #{words}, '%' )
+			</when>
+
+			<otherwise>
+				WHERE
+					${searchOpt} LIKE CONCAT( '%', #{words}, '%' )
+			</otherwise>
+		</choose>
+	</sql>
+
     <select id="findAll" resultType="shop.mtcoding.blog.model.Board">
-        select * from board_tb
+        select * from board_tb order by 1 desc
     </select>
 
     <select id="findById" resultType="shop.mtcoding.blog.model.Board">
@@ -25,10 +40,11 @@
     </update>
 
     <select id="findAllWithUser" resultType="shop.mtcoding.blog.dto.board.BoardResp$BoardMainResponseDto">
-        select bt.id, bt.title, bt.thumbnail, ut.username
+        select bt.id, bt.title, bt.thumbnail, ut.username, bt.created_at
         from board_tb bt
         inner join user_tb ut
         on bt.user_id = ut.id
+        <include refid="search"></include>
         order by bt.id desc
     </select>
 

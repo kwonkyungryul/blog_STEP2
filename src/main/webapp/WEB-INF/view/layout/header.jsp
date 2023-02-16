@@ -50,6 +50,11 @@
                             </li>
                         </c:otherwise>
                     </c:choose>
+                        <c:if test="${principal.role == 'ADMIN'}" >
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin">관리자페이지</a>
+                            </li>
+                        </c:if>
                     
                     
                 </ul>

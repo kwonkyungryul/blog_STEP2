@@ -1,5 +1,7 @@
 package shop.mtcoding.blog.dto.board;
 
+import java.sql.Timestamp;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,7 @@ public class BoardResp {
         private String title;
         private String thumbnail;
         private String username;
-        // Thumbnail 추후에 필요
+        private Timestamp createdAt;
     }
 
     @Setter

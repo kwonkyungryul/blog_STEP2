@@ -4,6 +4,7 @@ CREATE TABLE user_tb(
     password varchar not null,
     email varchar not null,
     profile varchar,
+    role varchar default 'USER',
     created_at timestamp not null
 );
 

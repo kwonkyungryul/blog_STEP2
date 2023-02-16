@@ -64,4 +64,22 @@ public class UserService {
 
         return userPS;
     }
+
+    public void 유저삭제(int id, String principalRole) {
+        if (!principalRole.equals("ADMIN")) {
+            throw new CustomApiException("관리자만 허용된 기능입니다.");
+        }
+
+        User userPS = userRepository.findById(id);
+        if (userPS == null) {
+            throw new CustomApiException("존재하지 않는 유저입니다.");
+        }
+
+        try {
+            userRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new CustomApiException("일시적인 서버 에러로 정상처리 되지 않았습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+    }
 }

@@ -34,7 +34,7 @@ public class ReplyController {
             throw new CustomException("비정상적인 접근입니다. 로그인을 해주세요.", HttpStatus.UNAUTHORIZED);
         }
 
-        replyService.댓글삭제(id, principal.getId());
+        replyService.댓글삭제(id, principal.getId(), principal.getRole());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "댓글삭제 성공", null), HttpStatus.OK);
     }

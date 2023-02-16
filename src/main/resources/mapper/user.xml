@@ -4,8 +4,26 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="shop.mtcoding.blog.model.UserRepository">
+
+    <sql id="search">
+		<choose>
+			<when test="searchOpt == 'all'">
+				WHERE username LIKE CONCAT( '%', #{words}, '%' )
+				OR email LIKE CONCAT( '%', #{words}, '%' )
+			</when>
+
+			<otherwise>
+				WHERE
+					${searchOpt} LIKE CONCAT( '%', #{words}, '%' )
+			</otherwise>
+		</choose>
+	</sql>
+
+
     <select id="findAll" resultType="shop.mtcoding.blog.model.User">
         select * from user_tb
+        <include refid="search"></include>
+        order by 1 desc
     </select>
 
     <select id="findById" resultType="shop.mtcoding.blog.model.User">

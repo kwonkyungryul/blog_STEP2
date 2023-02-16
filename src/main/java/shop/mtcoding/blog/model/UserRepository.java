@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserRepository {
-    public List<User> findAll();
+    public List<User> findAll(@Param("searchOpt") String searchOpt, @Param("words") String words);
 
     public User findById(int id);
 

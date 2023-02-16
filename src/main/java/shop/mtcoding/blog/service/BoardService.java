@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.mtcoding.blog.dto.board.BoardReq.BoardSaveReqDto;
 import shop.mtcoding.blog.dto.board.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.blog.handler.ex.CustomApiException;
-import shop.mtcoding.blog.handler.ex.CustomException;
 import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.BoardRepository;
 import shop.mtcoding.blog.util.HtmlParse;
@@ -35,14 +34,20 @@ public class BoardService {
     }
 
     @Transactional
-    public void 게시글삭제(int id, int userId) {
+    public void 게시글삭제(int id, int principalId, String principalRole) {
+        if (!principalRole.equals("ADMIN")) {
+            throw new CustomApiException("관리자만 허용된 기능입니다.");
+        }
+
         Board boardPS = boardRepository.findById(id);
         if (boardPS == null) {
             throw new CustomApiException("없는 게시글을 삭제할 수 없습니다.");
         }
 
-        if (userId != boardPS.getUserId()) {
-            throw new CustomApiException("해당 게시물을 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        if (!principalRole.equals("ADMIN")) {
+            if (principalId != boardPS.getUserId()) {
+                throw new CustomApiException("해당 게시물을 삭제할 권한이 없습니다.", HttpStatus.FORBIDDEN);
+            }
         }
 
         try { // 제어권을 가져옴

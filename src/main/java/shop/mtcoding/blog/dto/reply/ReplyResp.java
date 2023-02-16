@@ -1,5 +1,7 @@
 package shop.mtcoding.blog.dto.reply;
 
+import java.sql.Timestamp;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +15,6 @@ public class ReplyResp {
         private Integer userId;
         private Integer boardId;
         private String username;
+        private Timestamp createdAt;
     }
 }

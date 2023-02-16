@@ -20,7 +20,7 @@ public interface BoardRepository {
 
     public int deleteById(int id);
 
-    public List<BoardMainResponseDto> findAllWithUser();
+    public List<BoardMainResponseDto> findAllWithUser(@Param("searchOpt") String searchOpt, @Param("words") String words);
 
     public BoardDetailResponseDto findByIdWithUser(int id);
 }
